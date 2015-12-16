@@ -23,14 +23,14 @@
 start() ->
   gen_server:start({local, ?MODULE}, ?MODULE, [], []).
 
-stop() -> 
+stop() ->
   gen_server:cast(?MODULE,stop).
 
-watch(File,Callback) -> 
+watch(File,Callback) ->
   start(),
   gen_server:cast(?MODULE,{watch,{File,Callback}}).
 
-unwatch(File) -> 
+unwatch(File) ->
   gen_server:cast(?MODULE,{unwatch,File}).
 
 %% gen_server callbacks
@@ -98,7 +98,7 @@ do_watch({File,CB},LD) ->
       put({file,File},{WD,CB}),
       put({wd,WD},{File,CB}),
       LD
-  catch C:R -> 
+  catch C:R ->
       ?log([{error_watching_file,File},{C,R}]),LD
   end.
 
@@ -107,7 +107,7 @@ do_unwatch(File,LD) ->
     undefined   ->
       ?log([{not_watching,File}]),
       LD;
-    {WD,_CB} -> 
+    {WD,_CB} ->
       try talk_to_port(LD#ld.port,{remove,LD#ld.fd,WD})
       catch C:R -> ?log([{error_unwatching_file,File},{C,R}])
       end,
